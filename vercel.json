@@ -1,21 +1,9 @@
 {
   "version": 2,
-  "buildCommand": null,
-  "outputDirectory": ".",
   "framework": null,
-  "functions": {
-    "api/canvas.js": {
-      "runtime": "edge"
-    }
-  },
+  "outputDirectory": ".",
   "routes": [
-    {
-      "src": "/api/canvas",
-      "dest": "/api/canvas.js"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/index.html"
-    }
+    { "src": "/api/canvas", "dest": "/api/canvas.js" },
+    { "src": "/(.*)", "dest": "/index.html" }
   ]
 }
