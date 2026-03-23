@@ -1,15 +1,10 @@
-export const config = { runtime: 'edge' };
+export default async function handler(req, res) {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
+  if (req.method === 'OPTIONS') { res.status(200).end(); return; }
 
-export default async function handler(req) {
-  const url = new URL(req.url);
-  const endpoint = url.searchParams.get('endpoint');
-  
-  if (!endpoint) {
-    return new Response(JSON.stringify({ error: 'Missing endpoint' }), {
-      status: 400,
-      headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' }
-    });
-  }
+  const endpoint = req.query.endpoint;
+  if (!endpoint) { res.status(400).json({ error: 'Missing endpoint' }); return; }
 
   const CANVAS_TOKEN = "2174~eerBfnZCPu3wGDBAEa3eYUATQ3nZKM48cJXBaGMNuCLVQhmEcaaaATPYFtvAJNV2";
   const CANVAS_URL = "katyisd.instructure.com";
@@ -18,15 +13,9 @@ export default async function handler(req) {
     const r = await fetch(`https://${CANVAS_URL}/api/v1${endpoint}`, {
       headers: { 'Authorization': `Bearer ${CANVAS_TOKEN}` }
     });
-    const data = await r.text();
-    return new Response(data, {
-      status: r.status,
-      headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' }
-    });
+    const data = await r.json();
+    res.status(r.status).json(data);
   } catch (e) {
-    return new Response(JSON.stringify({ error: e.message }), {
-      status: 500,
-      headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' }
-    });
+    res.status(500).json({ error: e.message });
   }
 }
